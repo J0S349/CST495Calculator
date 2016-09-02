@@ -10,6 +10,17 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var display: UILabel!
+    
+    @IBAction func appendDigit(sender: UIButton) {
+        let digit = sender.currentTitle
+        if userIsInTheMiddleofTypingANumber {
+            
+        }
+        print("digit = \(digit)")
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
