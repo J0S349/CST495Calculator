@@ -12,25 +12,62 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var display: UILabel!
     
+    var userInTheMiddleOfTypingNumber: Bool = false;
+    
     @IBAction func appendDigit(sender: UIButton) {
+        // Let is considered to be as a "const" for java or C++
         let digit = sender.currentTitle
-        if userIsInTheMiddleofTypingANumber {
-            
+        
+        if userInTheMiddleOfTypingNumber {
+            display.text = display.text! + digit!
+        } else
+        {
+            display.text = digit!
+            userInTheMiddleOfTypingNumber = true
         }
-        print("digit = \(digit)")
+    }
+
+    // function used to take in operation options
+    @IBAction func operate(sender: UIButton) {
+        let operand = sender.currentTitle
+        
+        if userInTheMiddleOfTypingNumber {
+            Enter()
+        }
+        switch operand! { //need to unwrap it for it to be used like string
+        case "×": performOperation {$0 * $1}
+        case "÷": performOperation {$1 / $0}
+        case "+": performOperation {$0 + $1}
+        case "−": performOperation {$1 - $0}
+        default:
+            break
+        }
+    }
+
+    
+    var operandStack = Array<Double>()
+    @IBAction func Enter() {
+        userInTheMiddleOfTypingNumber = false;
+        operandStack.append(displayValue)
+        print("operandStack = \(operandStack)")
         
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+    // This is the function that will deal with reducing our code for performing different operations
+    func performOperation(operation: (Double, Double) -> Double){
+        if(operandStack.count >= 2){
+            displayValue = operation(operandStack.removeLast(), operandStack.removeLast())
+        }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    var displayValue: Double {
+        get {
+            return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+        }
+        set {
+            display.text = "\(newValue)"
+            userInTheMiddleOfTypingNumber = false
+        }
     }
-
-
 }
 
