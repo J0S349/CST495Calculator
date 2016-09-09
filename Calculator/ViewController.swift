@@ -14,6 +14,9 @@ class ViewController: UIViewController {
     
     var userInTheMiddleOfTypingNumber: Bool = false;
     
+    // This is connection between controller and model
+    var brain = CalculatorBrain()
+    
     @IBAction func appendDigit(sender: UIButton) {
         // Let is considered to be as a "const" for java or C++
         let digit = sender.currentTitle
@@ -29,43 +32,22 @@ class ViewController: UIViewController {
 
     // function used to take in operation options
     @IBAction func operate(sender: UIButton) {
-        let operand = sender.currentTitle
-        
         if userInTheMiddleOfTypingNumber {
             Enter()
         }
-        switch operand! { //need to unwrap it for it to be used like string
-        case "×": performOperation {$0 * $1}
-        case "÷": performOperation {$1 / $0}
-        case "+": performOperation {$0 + $1}
-        case "−": performOperation {$1 - $0}
-        case "√": PerformOperation {sqrt($0)}
-        default:
-            break
+        if let operation = sender.currentTitle {
+            if let result = brain.performOperation(operation){
+                displayValue = result
+            }
+            else{
+                displayValue = 0
+            }
         }
     }
 
-    
-    var operandStack = Array<Double>()
     @IBAction func Enter() {
         userInTheMiddleOfTypingNumber = false;
-        operandStack.append(displayValue)
-        print("operandStack = \(operandStack)")
-        
-    }
-    
-    // This is the function that will deal with reducing our code for performing different operations
-    func performOperation(operation: (Double, Double) -> Double){
-        if(operandStack.count >= 2){
-            displayValue = operation(operandStack.removeLast(), operandStack.removeLast())
-            Enter()
-        }
-    }
-    func PerformOperation(operation: Double -> Double){
-        if(operandStack.count >= 1){
-            displayValue = operation(operandStack.removeLast())
-            Enter()
-        }
+        brain.pushOperand(displayValue)
     }
     
     var displayValue: Double {
